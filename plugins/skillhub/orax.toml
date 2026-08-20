@@ -1,0 +1,8 @@
+resolver = 1
+name = "ora-space.skillhub"
+namespace = "official"
+kind = "ui"
+version = "0.1.0"
+description = "Ora Space SkillHub surface"
+homepage = "https://github.com/ora-space/ui-plugins"
+license = "Apache-2.0"

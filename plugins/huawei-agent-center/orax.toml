@@ -1,0 +1,8 @@
+resolver = 1
+name = "ora-space.huawei-agent-center"
+namespace = "official"
+kind = "ui"
+version = "0.1.0"
+description = "Ora Space Huawei Agent Center surface"
+homepage = "https://github.com/ora-space/ui-plugins"
+license = "Apache-2.0"

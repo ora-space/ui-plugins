@@ -1,0 +1,30 @@
+{
+  "workspace": [
+    "./packages/ui-plugin-base",
+    "./plugins/skillhub",
+    "./plugins/huawei-agent-center"
+  ],
+  "minimumDependencyAge": 0,
+  "tasks": {
+    "check": "deno task --cwd packages/ui-plugin-base check && deno task --cwd plugins/skillhub check && deno task --cwd plugins/huawei-agent-center check",
+    "lint": "deno lint packages plugins",
+    "format": "deno fmt",
+    "test": "deno task --cwd packages/ui-plugin-base test && deno task --cwd plugins/skillhub simulate && deno task --cwd plugins/huawei-agent-center simulate"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.ns", "dom", "esnext"]
+  },
+  "fmt": {
+    "lineWidth": 80,
+    "semiColons": true,
+    "singleQuote": false,
+    "exclude": ["**/dist/", "**/.data/"]
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    },
+    "exclude": ["**/dist/", "**/.data/"]
+  }
+}

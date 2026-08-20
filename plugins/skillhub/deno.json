@@ -1,0 +1,16 @@
+{
+  "name": "@ora-space/skillhub-ui",
+  "version": "0.1.0",
+  "exports": "./src/main.ts",
+  "imports": {
+    "@ora-space/plugin-sdk": "jsr:@ora-space/plugin-sdk@0.1.3"
+  },
+  "tasks": {
+    "check": "deno check src/main.ts tests/host-simulator.ts",
+    "lint": "deno lint src tests",
+    "format": "deno fmt src tests deno.json package.json README.md",
+    "simulate": "deno run --allow-run --allow-read --allow-write --allow-env tests/host-simulator.ts",
+    "dev": "deno run --no-prompt --allow-read=.data --allow-write=.data src/main.ts",
+    "build": "deno bundle src/main.ts -o dist/main.js"
+  }
+}
