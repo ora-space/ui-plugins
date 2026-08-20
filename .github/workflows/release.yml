@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*/v*"
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: "Plugin directory under plugins/"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Select plugin
+        # Tag `skillhub/v0.1.0` selects plugins/skillhub and version v0.1.0.
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            PLUGIN="${GITHUB_REF_NAME%%/*}"
+            VERSION="${GITHUB_REF_NAME#*/}"
+          else
+            PLUGIN="${{ inputs.plugin }}"
+            VERSION="dev"
+          fi
+          test -d "plugins/${PLUGIN}"
+          echo "PLUGIN_DIR=plugins/${PLUGIN}" >> "$GITHUB_ENV"
+          echo "PLUGIN_VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Build
+        working-directory: ${{ env.PLUGIN_DIR }}
+        run: deno task build
+
+      - name: Package .orax archive
+        working-directory: ${{ env.PLUGIN_DIR }}
+        run: |
+          set -euo pipefail
+          NAME=$(grep -m1 '^name' orax.toml | sed -E 's/^name *= *"(.*)"/\1/')
+          FILE="${NAME}-${PLUGIN_VERSION}.orax"
+          zip -j "$FILE" orax.toml dist/main.js logo.svg README.md
+          echo "ORAX_FILE=${PLUGIN_DIR}/${FILE}" >> "$GITHUB_ENV"
+
+      - name: Create Release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" "${ORAX_FILE}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes
