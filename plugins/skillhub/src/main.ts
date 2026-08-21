@@ -34,4 +34,7 @@ class SkillHubUiPlugin extends UiPlugin {
   ): void => handleDownloadCompleted(session, download);
 }
 
-await runUiPlugin(new SkillHubUiPlugin(), { pluginId: PLUGIN_ID });
+await runUiPlugin(new SkillHubUiPlugin(), {
+  pluginId: PLUGIN_ID,
+  sources: ["remoteSite"],
+});

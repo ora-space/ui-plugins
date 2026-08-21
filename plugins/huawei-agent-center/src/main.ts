@@ -34,4 +34,7 @@ class HuaweiAgentCenterUiPlugin extends UiPlugin {
   ): void => handleDownloadCompleted(session, download);
 }
 
-await runUiPlugin(new HuaweiAgentCenterUiPlugin(), { pluginId: PLUGIN_ID });
+await runUiPlugin(new HuaweiAgentCenterUiPlugin(), {
+  pluginId: PLUGIN_ID,
+  sources: ["remoteSite"],
+});

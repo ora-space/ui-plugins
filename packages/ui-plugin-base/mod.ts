@@ -7,11 +7,16 @@
 export {
   type CompletedDownload,
   INVALID_PARAMS,
+  METHOD_NOT_FOUND,
   parseDownloadCompleted,
+  parseRequest,
   parseSurfaceSession,
   type SurfaceSession,
+  type SurfaceSourceKind,
   UI_CONTRACT_VERSION,
   UI_DOWNLOAD_COMPLETED,
+  UI_PUSH,
+  UI_REQUEST,
   UI_SURFACE_CLOSED,
   UI_SURFACE_OPENED,
 } from "./protocol.ts";
@@ -20,6 +25,7 @@ export {
   runUiPlugin,
   UI_METHOD_ROUTES,
   UI_NOTIFICATION_ROUTES,
+  type UiHost,
   UiPlugin,
 } from "./ui-plugin.ts";
 export { SurfaceSessionRegistry } from "./session.ts";

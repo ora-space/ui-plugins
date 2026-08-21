@@ -3,6 +3,7 @@ import { PluginMethodError } from "@ora-space/plugin-sdk";
 import {
   INVALID_PARAMS,
   parseDownloadCompleted,
+  parseRequest,
   parseSurfaceSession,
 } from "../protocol.ts";
 
@@ -63,4 +64,23 @@ Deno.test("parseDownloadCompleted rejects a malformed download", () => {
     () => parseDownloadCompleted({ ...session }),
     PluginMethodError,
   );
+});
+
+Deno.test("parseRequest passes the payload through untouched", () => {
+  assertEquals(
+    parseRequest({ ...session, payload: { type: "increment", by: [1, 2] } }),
+    { session, payload: { type: "increment", by: [1, 2] } },
+  );
+});
+
+Deno.test("parseRequest defaults a missing payload to null", () => {
+  assertEquals(parseRequest({ ...session }), { session, payload: null });
+});
+
+Deno.test("parseRequest still validates the session", () => {
+  const error = assertThrows(
+    () => parseRequest({ surfaceId: "counter", payload: 1 }),
+    PluginMethodError,
+  );
+  assertEquals(error.code, INVALID_PARAMS);
 });
