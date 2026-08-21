@@ -8,8 +8,21 @@ export const UI_SURFACE_OPENED = "ui/surfaceOpened";
 export const UI_SURFACE_CLOSED = "ui/surfaceClosed";
 /** Host → plugin request: a file landed in this plugin's data directory. */
 export const UI_DOWNLOAD_COMPLETED = "ui/downloadCompleted";
+/** Host → plugin request: a panel page sent one payload through the bridge. */
+export const UI_REQUEST = "ui/request";
+/** Plugin → host notification: push one payload to a panel page. */
+export const UI_PUSH = "ui/push";
 /** JSON-RPC code the host expects for malformed params. */
 export const INVALID_PARAMS = -32602;
+/** JSON-RPC code for a request the plugin does not serve. */
+export const METHOD_NOT_FOUND = -32601;
+
+/**
+ * The content source of a declared Surface, mirroring `source.kind` in the
+ * manifest. Each kind implies the methods the host requires at handshake:
+ * `remoteSite` → `ui/downloadCompleted`, `panel` → `ui/request`.
+ */
+export type SurfaceSourceKind = "remoteSite" | "panel";
 
 /**
  * Identifies one Surface instance served by one host process generation.
@@ -77,6 +90,20 @@ export function parseDownloadCompleted(
       completedAt: readString(download, "completedAt"),
     },
   };
+}
+
+/**
+ * Validates `ui/request` params into the session and the opaque payload.
+ *
+ * The payload is whatever the panel page sent; it is passed through untouched
+ * (including `null` when absent) because its shape is the plugin's own protocol.
+ */
+export function parseRequest(
+  params: JsonValue,
+): { session: SurfaceSession; payload: JsonValue } {
+  const session = parseSurfaceSession(params);
+  const record = asRecord(params, "params");
+  return { session, payload: record.payload ?? null };
 }
 
 function asRecord(
