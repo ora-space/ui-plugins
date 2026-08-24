@@ -1,36 +1,20 @@
-# ora-space.skillhub
+# official/ora-space.skillhub
 
-An Ora **UI plugin** that embeds the SkillHub skill marketplace as a remote-site
-Surface.
+An Ora **webview plugin** that embeds the SkillHub skill marketplace.
 
-Ora renders `https://www.skillhub.cn` in a webview, restricts navigation to the
-hosts declared in `package.json`, and stores any file the site downloads inside
-this plugin's data directory. This process is then told about it through
-`ui/downloadCompleted` and decides whether the file looks like a skill archive
-(`.zip`). Today the verdict is only logged.
+Ora renders `https://www.skillhub.cn` in an isolated webview and restricts
+navigation to the exact origins declared in `orax.toml`. A webview plugin is
+configuration only: there is no Deno process and no entrypoint. Downloads are
+owned entirely by the host — a file downloaded from the site lands in this
+plugin's data directory and the user is prompted to import it as a skill or save
+it elsewhere, per the `[webview.downloads]` rules.
 
 ## Layout
 
 ```
-package.json                 Ora manifest (ora.kind = "ui", one remoteSite surface)
-deno.json                    developer tasks; Ora never reads it
-orax.toml                    release manifest for the .orax archive
-src/main.ts                  SkillHubUiPlugin, wired through runUiPlugin
-src/handlers/downloads.ts    ui/downloadCompleted
-tests/host-simulator.ts      drives this plugin the way the Ora host does
+orax.toml       manifest: kind = "webview"; start URL, allowed origins, download rules
+logo.svg        plugin icon (fixed name; not referenced from the manifest)
 ```
 
-The base class lives in `../../packages/ui-plugin-base` and is resolved through
-the Deno workspace; `deno task build` inlines it into `dist/main.js`.
-
-## Commands
-
-```
-deno task check       # type-check entrypoint and simulator
-deno task lint
-deno task simulate    # register → surfaceOpened → downloadCompleted → shutdown
-deno task build       # dist/main.js, self-contained bundle
-```
-
-Ora launches UI plugins with `--allow-read=<data-dir> --allow-write=<data-dir>`
-and `ORA_PLUGIN_DATA_DIR=<data-dir>`; the simulator uses the same flags.
+A webview package must not ship `main.js`; Ora rejects a config-only kind that
+looks runnable.

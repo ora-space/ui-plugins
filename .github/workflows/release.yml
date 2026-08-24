@@ -51,7 +51,8 @@ jobs:
           set -euo pipefail
           NAME=$(grep -m1 '^name' orax.toml | sed -E 's/^name *= *"(.*)"/\1/')
           FILE="${NAME}-${PLUGIN_VERSION}.orax"
-          zip -j "$FILE" orax.toml dist/main.js logo.svg README.md
+          # Flat package root: Ora loads the fixed entrypoint `main.js` next to orax.toml.
+          zip "$FILE" orax.toml main.js logo.svg README.md
           # Panel plugins ship their page; remote-site plugins have no ui/ directory.
           if [ -d ui ]; then zip -r "$FILE" ui; fi
           echo "ORAX_FILE=${PLUGIN_DIR}/${FILE}" >> "$GITHUB_ENV"

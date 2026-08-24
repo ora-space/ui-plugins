@@ -1,57 +1,24 @@
-import type { JsonValue } from "@ora-space/plugin-sdk";
-import {
-  type PluginContext,
-  runUiPlugin,
-  type SurfaceSession,
-  UiPlugin,
-} from "@ora-space/ui-plugin-base";
-import { PanelRequests } from "./handlers/requests.ts";
-
-/** Must match `ora.id` in package.json. */
-const PLUGIN_ID = "ora-space.hello-panel";
+import { defineWorkbenchPlugin } from "@ora-space/plugin-sdk";
+import { Counters } from "./handlers/counter.ts";
 
 /**
- * A package-shipped panel whose buttons round-trip through this process.
+ * A package-shipped workbench page whose buttons round-trip through this
+ * process.
  *
- * The page (`ui/`) is a view only: the counter and the stopwatch live here,
- * answers carry the whole state, and ticks are pushed with `host.push`. The
- * sample exists to show the three links of the bridge — page → host →
- * process → host → page — with as little business logic as possible.
+ * The page (`assets/`) is a view only: the counter lives here and every answer
+ * carries the whole state, so a page reload loses nothing. The v1 workbench
+ * contract has no plugin-to-page push channel; the page always pulls through
+ * `window.ora.invoke`, which the host forwards to exactly the methods below.
  */
-class HelloPanelPlugin extends UiPlugin {
-  #requests: PanelRequests | undefined;
+const counters = new Counters();
 
-  override onActivate(context: PluginContext): void {
-    // `host` is attached before activation, so the handler module can own it.
-    this.#requests = new PanelRequests(this.host);
-    console.info(`${context.pluginId} activated`);
-  }
-
-  override onDeactivate(): void {
-    this.#requests?.dispose();
-  }
-
-  override onSurfaceOpened = (session: SurfaceSession): void => {
-    console.info(`surface ${session.surfaceId}#${session.instanceId} opened`);
-  };
-
-  override onSurfaceClosed = (session: SurfaceSession): void => {
-    this.#requests?.forget(session);
-    console.info(`surface ${session.surfaceId}#${session.instanceId} closed`);
-  };
-
-  override onRequest = (
-    session: SurfaceSession,
-    payload: JsonValue,
-  ): JsonValue => {
-    if (this.#requests === undefined) {
-      throw new Error("plugin received a request before activation");
-    }
-    return { ...this.#requests.handle(session, payload) };
-  };
-}
-
-await runUiPlugin(new HelloPanelPlugin(), {
-  pluginId: PLUGIN_ID,
-  sources: ["panel"],
+const workbench = defineWorkbenchPlugin({
+  methods: {
+    "counter/get": (call) => counters.apply("get", call),
+    "counter/increment": (call) => counters.apply("increment", call),
+    "counter/decrement": (call) => counters.apply("decrement", call),
+    "counter/reset": (call) => counters.apply("reset", call),
+  },
 });
+
+await workbench.run();

@@ -1,0 +1,9 @@
+{
+  "name": "@ora-space/ui-plugin-testing",
+  "version": "0.2.0",
+  "exports": "./mod.ts",
+  "tasks": {
+    "check": "deno check mod.ts tests/",
+    "test": "deno test tests/"
+  }
+}

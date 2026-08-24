@@ -98,28 +98,6 @@ code {
   font-variant-numeric: tabular-nums;
 }
 
-.ticker {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.ticker__value {
-  font-size: 32px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.ticker__state {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.ticker__actions {
-  display: flex;
-  gap: 8px;
-}
-
 .button {
   appearance: none;
   border: 1px solid var(--accent);
