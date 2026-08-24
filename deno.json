@@ -1,32 +1,47 @@
 {
   "workspace": [
-    "./packages/ui-plugin-base",
-    "./plugins/skillhub",
-    "./plugins/huawei-agent-center",
+    "./packages/ui-plugin-testing",
     "./plugins/hello-panel"
   ],
   "minimumDependencyAge": 0,
+  "imports": {
+    "@ora-space/plugin-sdk": "jsr:@ora-space/plugin-sdk@^0.2.0"
+  },
   "tasks": {
-    "check": "deno task --cwd packages/ui-plugin-base check && deno task --cwd plugins/skillhub check && deno task --cwd plugins/huawei-agent-center check && deno task --cwd plugins/hello-panel check",
-    "lint": "deno lint packages plugins",
+    "check": "deno task --cwd packages/ui-plugin-testing check && deno task --cwd plugins/hello-panel check",
+    "lint": "deno lint packages plugins scripts",
     "format": "deno fmt",
-    "install": "deno run --allow-read --allow-write --allow-run --allow-env scripts/install-local.ts",
-    "test": "deno task --cwd packages/ui-plugin-base test && deno task --cwd plugins/skillhub simulate && deno task --cwd plugins/huawei-agent-center simulate && deno task --cwd plugins/hello-panel simulate"
+    "build": "deno task --cwd plugins/hello-panel build",
+    "install": "deno run --allow-read --allow-write --allow-run scripts/install-local.ts",
+    "test": "deno task --cwd packages/ui-plugin-testing test && deno task --cwd plugins/hello-panel simulate"
   },
   "compilerOptions": {
     "strict": true,
-    "lib": ["deno.ns", "dom", "esnext"]
+    "lib": [
+      "deno.ns",
+      "dom",
+      "esnext"
+    ]
   },
   "fmt": {
     "lineWidth": 80,
     "semiColons": true,
     "singleQuote": false,
-    "exclude": ["**/dist/", "**/.data/"]
+    "exclude": [
+      "plugins/*/main.js",
+      "**/.data/",
+      "deno.local.json"
+    ]
   },
   "lint": {
     "rules": {
-      "tags": ["recommended"]
+      "tags": [
+        "recommended"
+      ]
     },
-    "exclude": ["**/dist/", "**/.data/"]
+    "exclude": [
+      "plugins/*/main.js",
+      "**/.data/"
+    ]
   }
 }

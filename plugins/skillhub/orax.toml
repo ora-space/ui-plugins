@@ -1,8 +1,25 @@
 resolver = 1
 name = "ora-space.skillhub"
 namespace = "official"
-kind = "ui"
+kind = "webview"
 version = "0.1.0"
 description = "Ora Space SkillHub surface"
 homepage = "https://github.com/ora-space/ui-plugins"
 license = "Apache-2.0"
+
+[webview]
+start_url = "https://www.skillhub.cn"
+allowed_origins = ["https://www.skillhub.cn", "https://skillhub.cn"]
+
+# Skill archives downloaded anywhere on the site are offered to the user; the
+# host runs the chosen action (import as skill, or save as) itself.
+[webview.downloads]
+fallback = { reject = true }
+
+[[webview.downloads.rules]]
+page = { origin = "https://www.skillhub.cn", path_prefix = "/" }
+action = { prompt = ["import_skill", "save_as"] }
+
+[[webview.downloads.rules]]
+page = { origin = "https://skillhub.cn", path_prefix = "/" }
+action = { prompt = ["import_skill", "save_as"] }

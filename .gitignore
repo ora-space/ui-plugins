@@ -1,2 +1,3 @@
-dist/
+/plugins/*/main.js
 .data/
+/deno.local.json

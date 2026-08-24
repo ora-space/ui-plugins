@@ -1,23 +1,24 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@ora-space/plugin-sdk@0.1.3": "0.1.3",
     "jsr:@std/assert@1": "1.0.19",
+    "jsr:@std/collections@^1.1.3": "1.3.0",
     "jsr:@std/fs@1": "1.0.24",
     "jsr:@std/internal@^1.0.12": "1.0.14",
     "jsr:@std/internal@^1.0.14": "1.0.14",
     "jsr:@std/path@1": "1.1.6",
-    "jsr:@std/path@^1.1.5": "1.1.6"
+    "jsr:@std/path@^1.1.5": "1.1.6",
+    "jsr:@std/toml@1": "1.0.11"
   },
   "jsr": {
-    "@ora-space/plugin-sdk@0.1.3": {
-      "integrity": "b1e9093db67ba4b53433b9bdfdc4f438685ecc2f98ebdd3a3067b911565a5e04"
-    },
     "@std/assert@1.0.19": {
       "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
       "dependencies": [
         "jsr:@std/internal@^1.0.12"
       ]
+    },
+    "@std/collections@1.3.0": {
+      "integrity": "eb36b43d784477ea0b476483ac034a14bdd182aff921c812ecf662a1fcef9498"
     },
     "@std/fs@1.0.24": {
       "integrity": "f3061b45b81673a2bece689da041df32d174be064c89eb6397fb5718d3fb7877",
@@ -34,30 +35,18 @@
       "dependencies": [
         "jsr:@std/internal@^1.0.14"
       ]
+    },
+    "@std/toml@1.0.11": {
+      "integrity": "e084988b872ca4bad6aedfb7350f6eeed0e8ba88e9ee5e1590621c5b5bb8f715",
+      "dependencies": [
+        "jsr:@std/collections"
+      ]
     }
   },
   "workspace": {
-    "members": {
-      "packages/ui-plugin-base": {
-        "dependencies": [
-          "jsr:@ora-space/plugin-sdk@0.1.3"
-        ]
-      },
-      "plugins/hello-panel": {
-        "dependencies": [
-          "jsr:@ora-space/plugin-sdk@0.1.3"
-        ]
-      },
-      "plugins/huawei-agent-center": {
-        "dependencies": [
-          "jsr:@ora-space/plugin-sdk@0.1.3"
-        ]
-      },
-      "plugins/skillhub": {
-        "dependencies": [
-          "jsr:@ora-space/plugin-sdk@0.1.3"
-        ]
-      }
+    "links": {
+      "jsr:@ora-space/plugin-sdk@0.2.0": {},
+      "npm:@ora-space/plugin-sdk@0.2.0": {}
     }
   }
 }
