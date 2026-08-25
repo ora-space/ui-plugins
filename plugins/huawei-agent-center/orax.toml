@@ -1,5 +1,6 @@
 resolver = 1
-name = "ora-space.huawei-agent-center"
+title = "Huawei Agent Center"
+identifier = "ora-space.huawei-agent-center"
 namespace = "official"
 kind = "webview"
 version = "0.1.0"

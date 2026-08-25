@@ -74,7 +74,9 @@ export async function packagePlugin(options: {
   // enumerated after the build in the real run.
   if (options.checkOnly) {
     if (!isRunnable(identity.kind)) await installableSet(source, identity.kind);
-    console.log(`ok ${identity.name} v${identity.version} (${identity.kind})`);
+    console.log(
+      `ok ${identity.identifier} v${identity.version} (${identity.kind})`,
+    );
     return undefined;
   }
   if (isRunnable(identity.kind)) await build(source);

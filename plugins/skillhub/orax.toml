@@ -1,5 +1,6 @@
 resolver = 1
-name = "ora-space.skillhub"
+title = "SkillHub"
+identifier = "ora-space.skillhub"
 namespace = "official"
 kind = "webview"
 version = "0.1.0"

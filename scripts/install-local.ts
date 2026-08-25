@@ -3,7 +3,7 @@
  * end-to-end testing.
  *
  * Ora discovers plugins at
- * `<data-dir>/plugins/installed/<namespace>/<name>/<version>/orax.toml`; the
+ * `<data-dir>/plugins/installed/<namespace>/<identifier>/<version>/orax.toml`; the
  * version directory must agree with the manifest version. Discovery ignores
  * symlinked package directories and requires `orax.toml` to be a regular
  * file, so the deployment is always a real copy of the installable set. That
@@ -58,7 +58,7 @@ for (const plugin of args) {
     "plugins",
     "installed",
     identity.namespace,
-    identity.name,
+    identity.identifier,
   );
   const target = join(packageDir, identity.version);
   await clearPackageDir(packageDir);
@@ -66,5 +66,5 @@ for (const plugin of args) {
   for (const entry of [...files, ...directories]) {
     await copy(join(source, entry), join(target, entry));
   }
-  console.log(`installed ${identity.name} from ${source} into ${target}`);
+  console.log(`installed ${identity.identifier} from ${source} into ${target}`);
 }

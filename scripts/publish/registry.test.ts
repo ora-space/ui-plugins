@@ -11,7 +11,8 @@ const URL =
   "https://github.com/ora-space/ui-plugins/releases/download/skillhub/v0.1.0/ora-space.skillhub-v0.1.0.orax";
 
 const WEBVIEW = `resolver = 1
-name = "ora-space.skillhub"
+title = "SkillHub"
+identifier = "ora-space.skillhub"
 namespace = "official"
 kind = "webview"
 version = "0.1.0"
@@ -40,7 +41,8 @@ Deno.test("derives a webview entry that round-trips the package manifest", () =>
 });
 
 Deno.test("adds resolver and replaces stale download fields", () => {
-  const stale = `name = "ora-space.hello-panel"
+  const stale = `title = "Hello Panel"
+identifier = "ora-space.hello-panel"
 namespace = "official"
 kind = "workbench"
 version = "0.2.0"
@@ -56,7 +58,8 @@ methods = ["counter/get"]
   );
   assertEquals(parsed, {
     resolver: 1,
-    name: "ora-space.hello-panel",
+    title: "Hello Panel",
+    identifier: "ora-space.hello-panel",
     namespace: "official",
     kind: "workbench",
     version: "0.2.0",
@@ -72,17 +75,18 @@ Deno.test("rejects fields the desktop release form does not know", () => {
     () =>
       validateRegistryManifest({
         resolver: 1,
-        name: "x",
+        title: "X",
+        identifier: "x",
         namespace: "official",
         kind: "agent",
         version: "1.0.0",
         description: "d",
         url: URL,
         sha256: SHA,
-        title: "X",
+        name: "x",
       }),
     Error,
-    "unknown field title",
+    "unknown field name",
   );
 });
 
@@ -90,7 +94,7 @@ Deno.test("rejects a webview entry without its section", () => {
   assertThrows(
     () =>
       deriveRegistryManifest(
-        `name = "n"\nnamespace = "official"\nkind = "webview"\nversion = "1.0.0"\ndescription = "d"\n`,
+        `title = "N"\nidentifier = "n"\nnamespace = "official"\nkind = "webview"\nversion = "1.0.0"\ndescription = "d"\n`,
         { url: URL, sha256: SHA },
       ),
     Error,
@@ -98,7 +102,7 @@ Deno.test("rejects a webview entry without its section", () => {
   );
 });
 
-Deno.test("shards registry entries by the first letter of the name", () => {
+Deno.test("shards registry entries by the first letter of the identifier", () => {
   assertEquals(registryEntryPath("ora-space.skillhub"), [
     "registry",
     "o",

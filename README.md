@@ -115,7 +115,8 @@ instance after a process restart) or `{ kind: "plugin", code, message }` for a
 ```toml
 # workbench (hello-panel)
 resolver = 1
-name = "ora-space.hello-panel"
+title = "Hello Panel"
+identifier = "ora-space.hello-panel"
 namespace = "official"
 kind = "workbench"
 version = "0.1.0"
@@ -128,7 +129,8 @@ methods = ["counter/get", "counter/increment"]
 ```toml
 # webview (skillhub)
 resolver = 1
-name = "ora-space.skillhub"
+title = "SkillHub"
+identifier = "ora-space.skillhub"
 namespace = "official"
 kind = "webview"
 version = "0.1.0"
@@ -156,7 +158,7 @@ deno task install skillhub huawei-agent-center hello-panel ~/.ora
 ```
 
 builds each workbench plugin, then copies the installable set into
-`<data-dir>/plugins/installed/<namespace>/<name>/<version>/` (the version
+`<data-dir>/plugins/installed/<namespace>/<identifier>/<version>/` (the version
 directory must agree with the manifest). Ora discovers plugins there (symlinked
 package directories are ignored, so the deployment is always a real copy).
 Re-run the task after a rebuild or a page edit.
@@ -171,7 +173,7 @@ Only this repository is involved; the marketplace is a plain Git target.
 2. Tag the merge commit `<dir>/v<version>` (for example `skillhub/v0.1.0`) and
    push the tag. `release.yml` validates that the tag version equals the
    manifest version, packages the plugin with `scripts/package.ts` and creates
-   the GitHub Release with `<name>-v<version>.orax` and its `.sha256`. A
+   the GitHub Release with `<identifier>-v<version>.orax` and its `.sha256`. A
    pre-release version (`v0.2.0-beta.1`) is published as a pre-release and never
    registered.
 3. Copy `.env.example` to `.env` (`MARKETPLACE_DIR` is a local clone of the
@@ -184,15 +186,17 @@ Only this repository is involved; the marketplace is a plain Git target.
 
    The script downloads the released asset, checks its digest against the
    published `.sha256`, derives
-   `registry/<n>/<name>/{orax.toml,README.md,logo.svg}` from the files
+   `registry/<n>/<identifier>/{orax.toml,README.md,logo.svg}` from the files
    **inside** the archive, renders the PR body, and writes all of it to
-   `dist/publish/<name>-v<version>/` (`--dry-run` stops here). It then creates
-   or resets the branch `release/<name>-v<version>` on the clone, commits the
-   entry, pushes with `--force-with-lease`, and opens the pull request with your
-   own `gh` login — or updates it when it already exists. Re-running for the
-   same version is idempotent.
+   `dist/publish/<identifier>-v<version>/` (`--dry-run` stops here). It then
+   creates or resets the branch `release/<identifier>-v<version>` on the clone,
+   commits the entry, pushes with `--force-with-lease`, and opens the pull
+   request with your own `gh` login — or updates it when it already exists.
+   Re-running for the same version is idempotent.
 
 The registry manifest is the packaged `orax.toml` plus `resolver`, `url` and
 `sha256` and nothing else, because Ora parses it with `deny_unknown_fields`;
-never edit an entry by hand. `--local-package --dry-run` rehearses with a local
-build before the Release exists.
+never edit an entry by hand. A manifest identifies a plugin by `title` (display
+name) plus `identifier` (the id); there is no `name` field.
+`--local-package --dry-run` rehearses with a local build before the Release
+exists.
