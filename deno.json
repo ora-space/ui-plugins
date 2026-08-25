@@ -13,7 +13,9 @@
     "format": "deno fmt",
     "build": "deno task --cwd plugins/hello-panel build",
     "install": "deno run --allow-read --allow-write --allow-run scripts/install-local.ts",
-    "test": "deno task --cwd packages/ui-plugin-testing test && deno task --cwd plugins/hello-panel simulate"
+    "test": "deno test scripts/publish/ && deno task --cwd packages/ui-plugin-testing test && deno task --cwd plugins/hello-panel simulate",
+    "package": "deno run --allow-read --allow-write --allow-run scripts/package.ts",
+    "publish": "deno run --allow-read --allow-write --allow-run --allow-net --allow-env scripts/publish.ts"
   },
   "compilerOptions": {
     "strict": true,
@@ -30,7 +32,9 @@
     "exclude": [
       "plugins/*/main.js",
       "**/.data/",
-      "deno.local.json"
+      "deno.local.json",
+      "dist/",
+      "scripts/publish/pr-body.md"
     ]
   },
   "lint": {
@@ -41,7 +45,8 @@
     },
     "exclude": [
       "plugins/*/main.js",
-      "**/.data/"
+      "**/.data/",
+      "dist/"
     ]
   }
 }
