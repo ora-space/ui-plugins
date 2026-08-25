@@ -1,5 +1,6 @@
 resolver = 1
-name = "ora-space.hello-panel"
+title = "Hello Panel"
+identifier = "ora-space.hello-panel"
 namespace = "official"
 kind = "workbench"
 version = "0.1.0"

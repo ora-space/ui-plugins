@@ -173,15 +173,17 @@ const unpacked = join(workDir, "package");
 await run("unzip", ["-o", "-q", archive, "-d", unpacked]);
 const packageManifest = await Deno.readTextFile(join(unpacked, "orax.toml"));
 const packaged = parseToml(packageManifest) as {
-  name?: unknown;
+  identifier?: unknown;
   version?: unknown;
 };
-if (packaged.name !== identity.name || packaged.version !== version) {
+if (
+  packaged.identifier !== identity.identifier || packaged.version !== version
+) {
   throw new Error(
-    `archive manifest is ${packaged.name} ${packaged.version}, expected ${identity.name} ${version}`,
+    `archive manifest is ${packaged.identifier} ${packaged.version}, expected ${identity.identifier} ${version}`,
   );
 }
-const entryPath = registryEntryPath(identity.name);
+const entryPath = registryEntryPath(identity.identifier);
 const entryDir = join(workDir, entryPath.join("/"));
 await ensureDir(entryDir);
 await Deno.writeTextFile(
@@ -195,8 +197,8 @@ for (const file of ["README.md", "logo.svg"]) {
 }
 
 // 4. PR materials. The previous version is read from the marketplace base branch.
-const branch = `release/${identity.name}-v${version}`;
-const title = `feat(registry): publish ${identity.name} v${version}`;
+const branch = `release/${identity.identifier}-v${version}`;
+const title = `feat(registry): publish ${identity.identifier} v${version}`;
 const marketplace = settings.marketplaceDir;
 if (!(await exists(join(marketplace, ".git")))) {
   throw new Error(`${marketplace} is not a git clone`);
@@ -234,7 +236,7 @@ const body = render(
   await Deno.readTextFile(join(repoRoot, "scripts", "publish", "pr-body.md")),
   {
     change,
-    name: identity.name,
+    name: identity.identifier,
     version,
     kind: identity.kind,
     release_repo: settings.releaseRepo,
@@ -292,7 +294,7 @@ try {
   if (staged.ok) {
     // Not `Deno.exit`: that would skip the `finally` restoring the branch.
     console.log(
-      `${identity.name} v${version} is already registered on ${base}`,
+      `${identity.identifier} v${version} is already registered on ${base}`,
     );
   } else {
     await registerBranch();

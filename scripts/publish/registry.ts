@@ -16,7 +16,8 @@ import {
 /** Fields the release form requires; missing ones fail before any PR is made. */
 const REQUIRED_FIELDS = [
   "resolver",
-  "name",
+  "title",
+  "identifier",
   "namespace",
   "kind",
   "version",
@@ -108,7 +109,7 @@ export function validateRegistryManifest(entry: Record<string, unknown>): void {
   }
 }
 
-/** Registry path of an entry: `registry/<first letter of name>/<name>`. */
-export function registryEntryPath(name: string): string[] {
-  return ["registry", name[0], name];
+/** Registry path of an entry: `registry/<first letter of identifier>/<identifier>`. */
+export function registryEntryPath(identifier: string): string[] {
+  return ["registry", identifier[0], identifier];
 }

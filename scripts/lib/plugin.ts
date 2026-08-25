@@ -10,7 +10,10 @@ import { parse as parseToml } from "jsr:@std/toml@1";
 
 /** Manifest fields that decide packaging, installation and registration. */
 export interface PluginIdentity {
-  name: string;
+  /** Human-readable display name. */
+  title: string;
+  /** Complete plugin id, e.g. `ora-space.skillhub`; names install paths and assets. */
+  identifier: string;
   namespace: string;
   version: string;
   kind: string;
@@ -24,13 +27,22 @@ export async function readIdentity(source: string): Promise<PluginIdentity> {
   const manifest = parseToml(
     await Deno.readTextFile(join(source, "orax.toml")),
   ) as Record<string, unknown>;
-  for (const field of ["name", "namespace", "version", "kind"] as const) {
+  for (
+    const field of [
+      "title",
+      "identifier",
+      "namespace",
+      "version",
+      "kind",
+    ] as const
+  ) {
     if (typeof manifest[field] !== "string") {
       throw new Error(`${source}/orax.toml: missing string field ${field}`);
     }
   }
   return {
-    name: manifest.name as string,
+    title: manifest.title as string,
+    identifier: manifest.identifier as string,
     namespace: manifest.namespace as string,
     version: manifest.version as string,
     kind: manifest.kind as string,
@@ -100,9 +112,9 @@ export async function build(source: string): Promise<void> {
   if (!result.success) throw new Error(`build failed in ${source}`);
 }
 
-/** Release asset name: `<name>-v<version>.orax`. */
+/** Release asset name: `<identifier>-v<version>.orax`. */
 export function assetName(identity: PluginIdentity): string {
-  return `${identity.name}-v${identity.version}.orax`;
+  return `${identity.identifier}-v${identity.version}.orax`;
 }
 
 /** Release tag: `<plugin dir>/v<version>`. */
