@@ -333,7 +333,8 @@ async function registerBranch(): Promise<void> {
     "--json",
     "number,url",
     "--jq",
-    '.[0] | "\\(.number) \\(.url)"',
+    // `.[0]` alone prints "null null" for an empty list; `// empty` prints nothing.
+    '.[0] // empty | "\\(.number) \\(.url)"',
   ], { cwd: marketplace })).stdout;
   const bodyFile = join(workDir, "pr-body.md");
   if (existing === "") {
