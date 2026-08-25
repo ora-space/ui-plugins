@@ -21,7 +21,13 @@ own window.
 
 ```
 deno.json                         Deno workspace, shared import map, repository-wide tasks
-.github/workflows/release.yml     tag <plugin>/v* → builds that plugin's .orax
+.github/workflows/ci.yml          fmt / lint / script tests / package --check of every plugin
+.github/workflows/release.yml     tag <plugin>/v* → builds that plugin's .orax → GitHub Release
+scripts/lib/plugin.ts             manifest reading, installable file set, asset naming (one copy)
+scripts/package.ts                deno task package: validates and zips one plugin into dist/
+scripts/publish.ts                deno task publish: opens the marketplace registration PR
+scripts/publish/registry.ts       derives the marketplace orax.toml from the packaged manifest
+scripts/publish/pr-body.md        marketplace PR description template
 scripts/install-local.ts          deno task install: deploys into an Ora data directory
 packages/ui-plugin-testing/       @ora-space/ui-plugin-testing (workspace member, not on JSR)
   mod.ts                          public re-exports
@@ -154,3 +160,39 @@ builds each workbench plugin, then copies the installable set into
 directory must agree with the manifest). Ora discovers plugins there (symlinked
 package directories are ignored, so the deployment is always a real copy).
 Re-run the task after a rebuild or a page edit.
+
+## Releasing to the marketplace
+
+Only this repository is involved; the marketplace is a plain Git target.
+
+1. Bump `version` in `plugins/<dir>/orax.toml` (workbench plugins: also
+   `deno.json` and `package.json`), update the README (it is shown in the
+   marketplace verbatim), merge to `main`.
+2. Tag the merge commit `<dir>/v<version>` (for example `skillhub/v0.1.0`) and
+   push the tag. `release.yml` validates that the tag version equals the
+   manifest version, packages the plugin with `scripts/package.ts` and creates
+   the GitHub Release with `<name>-v<version>.orax` and its `.sha256`. A
+   pre-release version (`v0.2.0-beta.1`) is published as a pre-release and never
+   registered.
+3. Copy `.env.example` to `.env` (`MARKETPLACE_DIR` is a local clone of the
+   marketplace repository; the other values only change when rehearsing against
+   forks) and run
+
+   ```
+   deno task publish <dir> [--dry-run]
+   ```
+
+   The script downloads the released asset, checks its digest against the
+   published `.sha256`, derives
+   `registry/<n>/<name>/{orax.toml,README.md,logo.svg}` from the files
+   **inside** the archive, renders the PR body, and writes all of it to
+   `dist/publish/<name>-v<version>/` (`--dry-run` stops here). It then creates
+   or resets the branch `release/<name>-v<version>` on the clone, commits the
+   entry, pushes with `--force-with-lease`, and opens the pull request with your
+   own `gh` login — or updates it when it already exists. Re-running for the
+   same version is idempotent.
+
+The registry manifest is the packaged `orax.toml` plus `resolver`, `url` and
+`sha256` and nothing else, because Ora parses it with `deny_unknown_fields`;
+never edit an entry by hand. `--local-package --dry-run` rehearses with a local
+build before the Release exists.
