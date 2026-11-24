@@ -9,10 +9,13 @@ homepage = "https://github.com/ora-space/ui-plugins"
 license = "Apache-2.0"
 
 [webview]
-start_url = "https://ai.edevops.huawei.com/mcp/projects"
+start_url = "https://ai.edevops.huawei.com/mcp/projects/skill"
 # Origins are exact in the webview model (no host suffixes); extend this list
 # if the site's login flow visits further huawei.com origins.
-allowed_origins = ["https://ai.edevops.huawei.com"]
+allowed_origins = [
+  "https://ai.edevops.huawei.com",
+  "https://login.huawei.com",
+]
 
 [webview.downloads]
 fallback = { reject = true }
